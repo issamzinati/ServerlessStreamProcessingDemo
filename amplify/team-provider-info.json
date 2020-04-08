@@ -1,0 +1,20 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-streamprocessing-dev-133128-authRole",
+            "UnauthRoleArn": "arn:aws:iam::373336311667:role/amplify-streamprocessing-dev-133128-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::373336311667:role/amplify-streamprocessing-dev-133128-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-streamprocessing-dev-133128-deployment",
+            "UnauthRoleName": "amplify-streamprocessing-dev-133128-unauthRole",
+            "StackName": "amplify-streamprocessing-dev-133128",
+            "StackId": "arn:aws:cloudformation:us-east-1:373336311667:stack/amplify-streamprocessing-dev-133128/1e9b4e40-7984-11ea-adde-12f057d255e7",
+            "AmplifyAppId": "d1drrarzcruajq"
+        },
+        "categories": {
+            "auth": {
+                "Cognito": {}
+            }
+        }
+    }
+}
