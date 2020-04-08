@@ -1,3 +1,9 @@
+.idea
+node_modules
+*.log
+.env
+.args
+
 #amplify
 amplify/\#current-cloud-backend
 amplify/.config/local-*
