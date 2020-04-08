@@ -1,0 +1,8 @@
+{
+    "authRoleName": {
+        "Ref": "AuthRole"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRole"
+    }
+}

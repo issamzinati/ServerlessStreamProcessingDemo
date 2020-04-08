@@ -5,5 +5,12 @@
 			"providerPlugin": "awscloudformation",
 			"dependsOn": []
 		}
+	},
+	"permission": {
+		"KinesisFirehose": {
+			"service": "Policy",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
 	}
 }

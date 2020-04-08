@@ -1,0 +1,111 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "An auto-generated nested stack.",
+    "Metadata": {},
+    "Parameters": {
+      "FirhoseId": {
+        "Type": "String",
+        "Description": "The id of the AppSync API associated with this project.",
+        "Default": "NONE"
+      },
+      "env": {
+        "Type": "String",
+        "Description": "The environment name. e.g. Dev, Test, or Production",
+        "Default": "NONE"
+      },
+      "authRoleName": {
+        "Type": "String"
+      },
+      "unauthRoleName": {
+        "Type": "String"
+      }
+    },
+    "Resources": {
+      "UnAuthPublicPolicy": {
+        "Type": "AWS::IAM::Policy",
+        "Properties": {
+          "PolicyName": "UnAuthPermissionsToAccessFirehose",
+          "Roles": [
+            {
+              "Ref": "unauthRoleName"
+            }
+          ],
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                    "firehose:PutRecord",
+                    "firehose:PutRecordBatch"
+                ],
+                "Resource": [
+                  {
+                    "Fn::Sub":[
+                      "arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/*",
+                      {
+                        "env": {
+                          "Ref": "env"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "AuthPublicPolicy": {
+        "Type": "AWS::IAM::Policy",
+        "Properties": {
+          "PolicyName": "AuthPermissionsToAccessFirehose",
+          "Roles": [
+            {
+              "Ref": "authRoleName"
+            }
+          ],
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "firehose:PutRecord",
+                        "firehose:PutRecordBatch"
+                    ],
+                    "Resource": [
+                      {
+                        "Fn::Sub":[
+                          "arn:aws:firehose:${AWS::Region}:${AWS::AccountId}:deliverystream/*",
+                          {
+                            "env": {
+                              "Ref": "env"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+            ]
+          }
+        }
+      }
+    },
+    "Conditions": {
+      "HasEnvironmentParameter": {
+        "Fn::Not": [
+          {
+            "Fn::Equals": [
+              {
+                "Ref": "env"
+              },
+              "NONE"
+            ]
+          }
+        ]
+      }
+    },
+    "Outputs": {
+    }
+  }
