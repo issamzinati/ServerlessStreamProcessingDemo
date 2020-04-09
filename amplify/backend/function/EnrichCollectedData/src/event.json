@@ -1,5 +1,12 @@
 {
-  "key1": "value1",
-  "key2": "value2",
-  "key3": "value3"
+  "invocationId": "bfd94ccd-e125-437b-8dcd-861aa9dd8445",
+  "deliveryStreamArn": "arn:aws:firehose:us-east-1:373336311667:deliverystream/demo_firehose",
+  "region": "us-east-1",
+  "records": [
+    {
+      "recordId": "49605884790213515713853560515495849846104738337279442946000000",
+      "approximateArrivalTimestamp": 1586371260781,
+      "data": "eyJpZCI6MTU4NjM3NjI0NjAzNiwiYWN0aW9uIjoiY2xpY2siLCJpdGVtIjoiY291cnNlIDEiLCJQYXJ0aXRpb25LZXkiOiJwYXJ0aXRpb24tdXMtZWFzdC0xOmUzNjM4OTRiLWMxNDQtNGM4Yi05OTY2LWYwY2M2OGFlNjA4ZSJ9"
+    }
+  ]
 }

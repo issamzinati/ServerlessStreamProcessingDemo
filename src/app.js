@@ -3,6 +3,7 @@ import Analytics, {AWSKinesisFirehoseProvider } from '@aws-amplify/analytics';
 import Auth from '@aws-amplify/auth';
 import awsconfig from './aws-exports'
 
+Analytics.addPluggable(new AWSKinesisFirehoseProvider());
 //Amplify.configure(awsconfig);
 Amplify.configure({
     Auth: {
@@ -15,22 +16,20 @@ Amplify.configure({
       }
     }
   });
-  
-  Analytics.addPluggable(new AWSKinesisFirehoseProvider());
 
 const courses = document.querySelectorAll('a');
 for (let i = 0; i < courses.length; i++) {
     courses[i].addEventListener('click', ((evt) => {
         const now = new Date();
     
-        let data = {
+        let dat = {
           id: now.getTime(),
           action: "click",
           item: evt
         }
-        console.log(data);
+        console.log(dat);
         Analytics.record({
-          data: data,
+          data: dat,
           streamName: awsconfig.aws_firehose_name
         }, 'AWSKinesisFirehose');
         

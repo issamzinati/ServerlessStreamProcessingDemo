@@ -68,7 +68,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "amplify-streamprocessing-dev-133128-deployment",
-					"S3Key": "amplify-builds/EnrichCollectedData-6258514b784779663542-build.zip"
+					"S3Key": "amplify-builds/EnrichCollectedData-75483735654f55714f70-build.zip"
 				}
 			}
 		},

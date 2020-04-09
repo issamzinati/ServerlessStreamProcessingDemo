@@ -12,9 +12,9 @@
   "author": "Issam Alzinati",
   "license": "ISC",
   "dependencies": {
-    "@aws-amplify/core": "latest",
-    "@aws-amplify/analytics": "latest",
-    "@aws-amplify/auth": "latest"
+    "@aws-amplify/core": "2.2.5",
+    "@aws-amplify/analytics": "2.2.6",
+    "@aws-amplify/auth": "2.1.6"
   },
   "devDependencies": {
     "webpack": "^4.17.1",
