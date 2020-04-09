@@ -1,1 +1,1 @@
-# Event Processing Demo
+# Serverless Stream Processing Demo
