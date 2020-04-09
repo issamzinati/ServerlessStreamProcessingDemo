@@ -1,0 +1,384 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "An auto-generated stack to create customer user pool group.",
+  "Metadata": {},
+  "Parameters": {
+    "storageDataBucketBucketName": {
+      "Type": "String"
+    },
+    "functionEnrichCollectedDataName": {
+      "Type": "String"
+    },
+    "ProjectName": {
+      "Type": "String",
+      "Default": "DateLeadDemo"
+    },
+    "env": {
+      "Type": "String"
+    }
+  },
+  "Conditions": {},
+  "Resources": {
+    "KinesisDeliveryStreamRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": {
+          "Fn::Join": [
+            "_",
+            [
+              {
+                "Ref": "ProjectName"
+              },
+              "firehose_delivery",
+              "role",
+              {
+                "Ref": "env"
+              }
+            ]
+          ]
+        },
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "firehose.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "sts:ExternalId": {
+                    "Ref": "AWS::AccountId"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "KinesisDeliveryStreamPolicy": {
+      "DependsOn": [
+        "KinesisDeliveryStreamRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": {
+          "Fn::Join": [
+            "_",
+            [
+              {
+                "Ref": "ProjectName"
+              },
+              "firehose_delivery",
+              "policy",
+              {
+                "Ref": "env"
+              }
+            ]
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "KinesisDeliveryStreamRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Action": [
+                "glue:GetTable",
+                "glue:GetTableVersion",
+                "glue:GetTableVersions"
+              ],
+              "Resource": "*"
+            },
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Action": [
+                "s3:AbortMultipartUpload",
+                "s3:GetBucketLocation",
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:ListBucketMultipartUploads",
+                "s3:PutObject"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": [
+                    "arn:aws:s3:::${bucket}",
+                    {
+                      "bucket": {
+                        "Ref": "storageDataBucketBucketName"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "Fn::Sub": [
+                    "arn:aws:s3:::${bucket}/*",
+                    {
+                      "bucket": {
+                        "Ref": "storageDataBucketBucketName"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Action": [
+                "lambda:InvokeFunction",
+                "lambda:GetFunctionConfiguration"
+              ],
+              "Resource": 
+              {
+                "Fn::Sub": [
+                  "arn:aws:lambda:${region}:${account}:function:${function}:$LATEST",
+                  {
+                    "function": {
+                      "Ref": "functionEnrichCollectedDataName"
+                    },
+                    "region": {
+                      "Ref": "AWS::Region"
+                    },
+                    "account": {
+                      "Ref": "AWS::AccountId"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Action": [
+                "logs:PutLogEvents"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": [
+                    "arn:aws:logs:${region}:${account}:log-group:/aws/kinesisfirehose/${project_name}_firehose_stream_${env}:log-stream:*",
+                    {
+                      "project_name": {
+                        "Ref": "ProjectName"
+                      },
+                      "env": {
+                        "Ref": "env"
+                      },
+                      "region": {
+                        "Ref": "AWS::Region"
+                      },
+                      "account": {
+                        "Ref": "AWS::AccountId"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "Fn::Sub": [
+                    "arn:aws:logs:${region}:${account}:log-group:/aws/kinesisfirehose/${project_name}_firehose_stream_backup_${env}:log-stream:*",
+                    {
+                      "project_name": {
+                        "Ref": "ProjectName"
+                      },
+                      "env": {
+                        "Ref": "env"
+                      },
+                      "region": {
+                        "Ref": "AWS::Region"
+                      },
+                      "account": {
+                        "Ref": "AWS::AccountId"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Action": [
+                "kinesis:DescribeStream",
+                "kinesis:GetShardIterator",
+                "kinesis:GetRecords",
+                "kinesis:ListShards"
+              ],
+              "Resource": { "Fn::Sub":"arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/%FIREHOSE_STREAM_NAME%"}
+            }
+          ]
+        }
+      }
+    },
+    "KinesisDeliveryStream": {
+      "DependsOn": [
+        "KinesisDeliveryStreamRole",
+        "KinesisDeliveryStreamPolicy"
+      ],
+      "Type": "AWS::KinesisFirehose::DeliveryStream",
+      "Properties": {
+        "DeliveryStreamName": {
+          "Fn::Join": [
+            "_",
+            [
+              {
+                "Ref": "ProjectName"
+              },
+              "firehose_delivery",
+              {
+                "Ref": "env"
+              }
+            ]
+          ]
+        },
+        "DeliveryStreamType": "DirectPut",
+        "ExtendedS3DestinationConfiguration": {
+          "BucketARN": {
+            "Fn::Sub": [
+              "arn:aws:s3:::${bucket}",
+              {
+                "bucket": {
+                  "Ref": "storageDataBucketBucketName"
+                }
+              }
+            ]
+          },
+          "BufferingHints": {
+            "IntervalInSeconds": 60,
+            "SizeInMBs": 1
+          },
+          "CloudWatchLoggingOptions": {
+            "Enabled": true,
+            "LogGroupName": {
+              "Fn::Sub": [
+                "/aws/kinesisfirehose/${project_name}_firehose_stream_${env}",
+                {
+                  "project_name": {
+                    "Ref": "ProjectName"
+                  },
+                  "env": {
+                    "Ref": "env"
+                  }
+                }
+              ]
+            },
+            "LogStreamName": {
+              "Fn::Join": [
+                "_",
+                [
+                  {
+                    "Ref": "ProjectName"
+                  },
+                  "log",
+                  {
+                    "Ref": "env"
+                  }
+                ]
+              ]
+            }
+          },
+          "CompressionFormat": "UNCOMPRESSED",
+          "ErrorOutputPrefix": "errors/",
+          "Prefix": "destination/",
+          "RoleARN": {
+            "Fn::GetAtt": [
+              "KinesisDeliveryStreamRole",
+              "Arn"
+            ]
+          },
+          "S3BackupMode": "Enabled",
+          "S3BackupConfiguration": {
+            "BucketARN": {
+              "Fn::Sub": [
+                "arn:aws:s3:::${bucket}",
+                {
+                  "bucket": {
+                    "Ref": "storageDataBucketBucketName"
+                  }
+                }
+              ]
+            },
+            "BufferingHints": {
+              "IntervalInSeconds": "300",
+              "SizeInMBs": "5"
+            },
+            "CompressionFormat": "UNCOMPRESSED",
+            "Prefix": "source/",
+            "RoleARN": {
+              "Fn::GetAtt": [
+                "KinesisDeliveryStreamRole",
+                "Arn"
+              ]
+            },
+            "CloudWatchLoggingOptions": {
+              "Enabled": true,
+              "LogGroupName": {
+                "Fn::Sub": [
+                  "/aws/kinesisfirehose/${project_name}_firehose_stream_backup_${env}",
+                  {
+                    "project_name": {
+                      "Ref": "ProjectName"
+                    }
+                  ,
+                    "env": {
+                      "Ref": "env"
+                    }
+                  }
+                ]
+              },
+              "LogStreamName": {
+                "Fn::Join": [
+                  "_",
+                  [
+                    {
+                      "Ref": "ProjectName"
+                    },
+                    "backup",
+                    "log",
+                    {
+                      "Ref": "env"
+                    }
+                  ]
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "kinesisname": {
+      "Description": "Kinesis Stream Name",
+      "Value": {
+        "Ref": "KinesisDeliveryStream"
+      }
+    },
+    "kinesisarn": {
+      "Description": "Kinesis Stream Arn",
+      "Value": {
+        "Fn::GetAtt": [
+          "KinesisDeliveryStream",
+          "Arn"
+        ]
+      }
+    },
+    "kinesisrole": {
+      "Description": "Kinesis IAM Arn",
+      "Value": {
+        "Fn::GetAtt": [
+          "KinesisDeliveryStreamRole",
+          "Arn"
+        ]
+      }
+    }
+  }
+}

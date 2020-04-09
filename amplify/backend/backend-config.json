@@ -25,5 +25,28 @@
 			"service": "S3",
 			"providerPlugin": "awscloudformation"
 		}
+	},
+	"analytics": {
+		"FirehoseStreamIn": {
+			"service": "KinesisFirehose",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [
+
+			{
+					"category": "storage",
+					"resourceName": "DataBucket",
+					"attributes": [
+						"BucketName"
+					]
+				},
+				{
+					"category": "function",
+					"resourceName": "EnrichCollectedData",
+					"attributes": [
+						"Name"
+					]
+				}
+			]
+		}
 	}
 }
