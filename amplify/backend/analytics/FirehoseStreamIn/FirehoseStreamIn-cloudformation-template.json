@@ -21,7 +21,7 @@
       "Type": "String"
     },
     "GlueDatabasenTableName": {
-      "Default": "event20",
+      "Default": "eventdestination",
       "Type": "String"
     }
   },

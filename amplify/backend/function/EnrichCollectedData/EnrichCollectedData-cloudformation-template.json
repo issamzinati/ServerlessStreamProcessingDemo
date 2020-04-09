@@ -65,7 +65,7 @@
 					]
 				},
 				"Runtime": "nodejs12.x",
-				"Timeout": "25",
+				"Timeout": "120",
 				"Code": {
 					"S3Bucket": "amplify-streamprocessing-dev-133128-deployment",
 					"S3Key": "amplify-builds/EnrichCollectedData-75483735654f55714f70-build.zip"
