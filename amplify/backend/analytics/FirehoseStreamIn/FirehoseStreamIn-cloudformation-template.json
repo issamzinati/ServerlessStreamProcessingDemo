@@ -138,8 +138,7 @@
                 "lambda:InvokeFunction",
                 "lambda:GetFunctionConfiguration"
               ],
-              "Resource": 
-              {
+              "Resource": {
                 "Fn::Sub": [
                   "arn:aws:lambda:${region}:${account}:function:${function}:$LATEST",
                   {
@@ -212,7 +211,9 @@
                 "kinesis:GetRecords",
                 "kinesis:ListShards"
               ],
-              "Resource": { "Fn::Sub":"arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/%FIREHOSE_STREAM_NAME%"}
+              "Resource": {
+                "Fn::Sub": "arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/%FIREHOSE_STREAM_NAME%"
+              }
             }
           ]
         }
@@ -326,8 +327,7 @@
                   {
                     "project_name": {
                       "Ref": "ProjectName"
-                    }
-                  ,
+                    },
                     "env": {
                       "Ref": "env"
                     }
@@ -350,6 +350,52 @@
                 ]
               }
             }
+          },
+          "ProcessingConfiguration": {
+            "Enabled": "true",
+            "Processors": [
+              {
+                "Parameters": [
+                  {
+                    "ParameterName": "LambdaArn",
+                    "ParameterValue": {
+                      "Fn::Sub": [
+                        "arn:aws:lambda:${region}:${account}:function:${function}:$LATEST",
+                        {
+                          "function": {
+                            "Ref": "functionEnrichCollectedDataName"
+                          },
+                          "region": {
+                            "Ref": "AWS::Region"
+                          },
+                          "account": {
+                            "Ref": "AWS::AccountId"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "ParameterName": "BufferSizeInMBs",
+                    "ParameterValue": "1"
+                  },
+                  {
+                    "ParameterName": "BufferIntervalInSeconds",
+                    "ParameterValue": "60"
+                  },
+                  {
+                    "ParameterName": "RoleArn",
+                    "ParameterValue": {
+                      "Fn::GetAtt": [
+                        "KinesisDeliveryStreamRole",
+                        "Arn"
+                      ]
+                    }
+                  }
+                ],
+                "Type": "Lambda"
+              }
+            ]
           }
         }
       }
