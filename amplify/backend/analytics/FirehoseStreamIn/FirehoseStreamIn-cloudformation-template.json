@@ -15,6 +15,14 @@
     },
     "env": {
       "Type": "String"
+    },
+    "GlueDatabasenName": {
+      "Default": "demotest",
+      "Type": "String"
+    },
+    "GlueDatabasenTableName": {
+      "Default": "event20",
+      "Type": "String"
     }
   },
   "Conditions": {},
@@ -254,7 +262,7 @@
           },
           "BufferingHints": {
             "IntervalInSeconds": 60,
-            "SizeInMBs": 1
+            "SizeInMBs": 64
           },
           "CloudWatchLoggingOptions": {
             "Enabled": true,
@@ -396,6 +404,40 @@
                 "Type": "Lambda"
               }
             ]
+          },
+          "DataFormatConversionConfiguration": {
+            "SchemaConfiguration": {
+              "CatalogId": {
+                "Fn::Sub": "${AWS::AccountId}"
+              },
+              "RoleARN": {
+                "Fn::GetAtt": [
+                  "KinesisDeliveryStreamRole",
+                  "Arn"
+                ]
+              },
+              "DatabaseName": {
+                "Ref": "GlueDatabasenName"
+              },
+              "TableName": {
+                "Ref": "GlueDatabasenTableName"
+              },
+              "Region": {
+                "Fn::Sub":"${AWS::Region}"
+              },
+              "VersionId": "LATEST"
+            },
+            "InputFormatConfiguration": {
+              "Deserializer": {
+                "OpenXJsonSerDe": {}
+              }
+            },
+            "OutputFormatConfiguration": {
+              "Serializer": {
+                "ParquetSerDe": {}
+              }
+            },
+            "Enabled": "true"
           }
         }
       }
